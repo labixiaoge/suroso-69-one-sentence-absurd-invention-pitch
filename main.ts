@@ -11,6 +11,13 @@ const SENTENCE = readFileSync(new URL("./entry.txt", import.meta.url), "utf8");
 if (SENTENCE.length < 1 || SENTENCE.length > 220) {
   throw new Error(`entry.txt must be 1-220 characters, got ${SENTENCE.length}`);
 }
+if (SENTENCE.includes("\n") || SENTENCE.includes("\r")) {
+  throw new Error("entry.txt must be a single line, no embedded line breaks");
+}
+const terminators = SENTENCE.match(/[.!?]/g) ?? [];
+if (terminators.length !== 1 || !/[.!?]$/.test(SENTENCE)) {
+  throw new Error("entry.txt must be exactly one sentence ending with . ! or ?");
+}
 
 mkdirSync("/output", { recursive: true });
 writeFileSync("/output/entry.txt", SENTENCE, "utf8");
